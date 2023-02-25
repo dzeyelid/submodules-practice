@@ -1,0 +1,3 @@
+[submodule "new-repository"]
+	path = new-repository
+	url = https://github.com/dzeyelid/new-repository
