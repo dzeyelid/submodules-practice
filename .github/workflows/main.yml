@@ -24,6 +24,7 @@ jobs:
       - name: Checkout submodule repository
         run: |
           pushd ${{ inputs.submodule_dir }}
+          git switch main
           git log origin/main --oneline
           git pull --rebase
           popd
