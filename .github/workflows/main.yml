@@ -1,4 +1,4 @@
-name: 'Pull submodule\'s update'
+name: 'Pull submodule''s update'
 
 on:
   workflow_dispatch:
