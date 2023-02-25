@@ -21,6 +21,9 @@ jobs:
       - name: Checkout submodule repository
         run: |
           pushd ${{ inputs.submodule_dir }}
+          git status
+          git branch -a
+          git log --oneline -10
           git pull
           popd
 
