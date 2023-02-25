@@ -23,11 +23,8 @@ jobs:
       - name: Checkout submodule repository
         run: |
           pushd ${{ inputs.submodule_dir }}
-          git config --list
-          git status
-          git branch -a
-          git log --oneline -10
-          git pull
+          git log origin/main --oneline
+          git pull --rebase
           popd
 
       - name: Build
