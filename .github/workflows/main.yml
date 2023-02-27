@@ -53,6 +53,8 @@ jobs:
           gh auth status
           gh release list
           gh release create v0.0.1 --draft --title v0.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   create_pull_request:
     name: Create pull request
