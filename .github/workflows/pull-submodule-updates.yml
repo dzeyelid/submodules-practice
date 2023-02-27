@@ -55,7 +55,7 @@ jobs:
           git commit -m "Update submodule: ${{ inputs.submodule_dir }}"
           git push -u origin ${HEAD_BRANCH}
           git tag ${VERSION_TAG}
-          git push ${VERSION_TAG}
+          git push origin ${VERSION_TAG}
         env:
           VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
           HEAD_BRANCH: ${{ steps.calculate_version.outputs.version_tag }}
