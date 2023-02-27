@@ -14,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
+      HEAD_BRANCH: ${{ steps.calculate_version.outputs.version_tag }}
     steps:
       - name: Checkout base repository
         uses: actions/checkout@v3
@@ -33,14 +36,28 @@ jobs:
         run: |
           echo 'Build'
 
+      - name: Calculate semantic version
+        id: calculate_version
+        uses: paulhatch/semantic-version@v5.0.3
+        with:
+          tag_prefix: v
+      - run: |
+          echo ${VERSION} | jq
+        env:
+          VERSION: ${{ toJSON(steps.calculate_version.outputs) }}
+
       - name: Push updates
         run: |
           git config user.name github-actions
           git config user.email github-actions@example.com
+          git switch -c ${VERSION_TAG}
           git add ${{ inputs.submodule_dir }}
           git commit -m "Update submodule: ${{ inputs.submodule_dir }}"
+          git tag ${VERSION_TAG}
           git push
-        continue-on-error: true # for debug
+        env:
+          VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
+#        continue-on-error: true # for debug
 
   create_release_draft:
     name: Create release draft
@@ -51,25 +68,23 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v3
-      - name: Calculate semantic version
-        id: calculate_version
-        uses: paulhatch/semantic-version@v5.0.3
-        with:
-          tag_prefix: v
-      - run: |
-          echo ${VERSION} | jq
-        env:
-          VERSION: ${{ toJSON(steps.calculate_version.outputs) }}
       - run: |
           gh release create ${VERSION_TAG} --draft --title ${VERSION_TAG}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
+          VERSION_TAG: ${{ needs.build.outputs.VERSION_TAG }}
 
   create_pull_request:
     name: Create pull request
     needs:
-      - create_release_draft
+      - build
     runs-on: ubuntu-latest
     steps:
       - run: echo 'Todo'
+      - uses: actions/checkout@v3
+      - run: |
+          gh pr create --title ${VERSION_TAG} --base ${HEAD_BRANCH}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION_TAG: ${{ needs.build.outputs.VERSION_TAG }}
+          HEAD_BRANCH: ${{ needs.build.outputs.HEAD_BRANCH }}
