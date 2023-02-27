@@ -47,6 +47,8 @@ jobs:
     needs:
       - build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - run: echo 'Todo'
       - uses: actions/checkout@v3
