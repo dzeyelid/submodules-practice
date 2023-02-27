@@ -52,19 +52,28 @@ jobs:
     steps:
       - run: echo 'Todo'
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.9.7
-        with:
-          versionSpec: 5.x
+#        with:
+#          fetch-depth: 0
+#      - name: Install GitVersion
+#        uses: gittools/actions/gitversion/setup@v0.9.7
+#        with:
+#          versionSpec: 5.x
+#      - name: Calculate semantic version
+#        id: gitversion
+#        uses: gittools/actions/gitversion/execute@v0.9.7
+#      - run: |
+#          echo ${GITVERSION} | jq
+#        env:
+#          GITVERSION: ${{ toJSON(steps.gitversion.outputs) }}
       - name: Calculate semantic version
-        id: gitversion
-        uses: gittools/actions/gitversion/execute@v0.9.7
+        id: version
+        uses: paulhatch/semantic-version@v5
+        with:
+          tag_prefix: v
       - run: |
-          echo ${GITVERSION} | jq
+          echo ${VERSION} | jq
         env:
-          GITVERSION: ${{ steps.gitversion.outputs }}
+          VERSION: ${{ toJSON(steps.version.outputs) }}
       - run: |
           gh release create v0.0.1 --draft --title v0.0.1
         env:
