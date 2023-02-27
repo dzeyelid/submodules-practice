@@ -52,9 +52,16 @@ jobs:
     steps:
       - run: echo 'Todo'
       - uses: actions/checkout@v3
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
+      - name: Calculate semantic version
+        id: gitversion
+        uses: gittools/actions/gitversion/excute@v0.9.7
       - run: |
-          gh auth status
-          gh release list
+          echo ${GITVERSION} | jq
+        env:
+          GITVERSION: ${{ steps.gitversion.outputs }}
+      - run: |
           gh release create v0.0.1 --draft --title v0.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
