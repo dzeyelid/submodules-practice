@@ -61,22 +61,6 @@ jobs:
         env:
           VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
           HEAD_BRANCH: update-submodule-${{ steps.calculate_version.outputs.version_tag }}
-#        continue-on-error: true # for debug
-
-  create_release_draft:
-    name: Create release draft
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v3
-      - run: |
-          gh release create ${VERSION_TAG} --draft --title ${VERSION_TAG}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION_TAG: ${{ needs.build.outputs.VERSION_TAG }}
 
   create_pull_request:
     name: Create pull request
@@ -89,7 +73,13 @@ jobs:
       - run: echo 'Todo'
       - uses: actions/checkout@v3
       - run: |
-          gh pr create --head ${HEAD_BRANCH} --title ${VERSION_TAG} --body "Update submodule\n- candidated version: ${VERSION_TAG}"
+          gh pr create \
+            --head ${HEAD_BRANCH} \
+            --title ${VERSION_TAG} \
+            --body << EOS \
+            Update submodule \
+            - candidated version: ${VERSION_TAG} \
+            EOS
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION_TAG: ${{ needs.build.outputs.VERSION_TAG }}
