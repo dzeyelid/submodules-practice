@@ -48,15 +48,17 @@ jobs:
 
       - name: Push updates
         run: |
+          git switch main
           git config user.name github-actions
           git config user.email github-actions@example.com
-          git switch -c ${VERSION_TAG}
+          git switch -c ${HEAD_BRANCH}
           git add ${{ inputs.submodule_dir }}
           git commit -m "Update submodule: ${{ inputs.submodule_dir }}"
           git tag ${VERSION_TAG}
-          git push
+          git push -u origin ${HEAD_BRANCH}
         env:
           VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
+          HEAD_BRANCH: ${{ steps.calculate_version.outputs.version_tag }}
 #        continue-on-error: true # for debug
 
   create_release_draft:
