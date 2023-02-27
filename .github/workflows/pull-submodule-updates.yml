@@ -16,7 +16,7 @@ jobs:
       contents: write
     outputs:
       VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
-      HEAD_BRANCH: ${{ steps.calculate_version.outputs.version_tag }}
+      HEAD_BRANCH: ${{ steps.push.outputs.HEAD_BRANCH }}
     steps:
       - name: Checkout base repository
         uses: actions/checkout@v3
@@ -47,6 +47,7 @@ jobs:
           VERSION: ${{ toJSON(steps.calculate_version.outputs) }}
 
       - name: Push updates
+        id: push
         run: |
           git config user.name github-actions
           git config user.email github-actions@example.com
@@ -56,9 +57,10 @@ jobs:
           git push -u origin ${HEAD_BRANCH}
           git tag ${VERSION_TAG}
           git push origin ${VERSION_TAG}
+          echo "HEAD_BRANCH=${HEAD_BRANCH}" > ${GITHUB_OUTPUT}
         env:
           VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
-          HEAD_BRANCH: ${{ steps.calculate_version.outputs.version_tag }}
+          HEAD_BRANCH: update-submodule-${{ steps.calculate_version.outputs.version_tag }}
 #        continue-on-error: true # for debug
 
   create_release_draft:
