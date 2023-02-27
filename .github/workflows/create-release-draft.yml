@@ -17,14 +17,32 @@ jobs:
   create_release_draft:
     name: Create release draft
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+#    if: github.event.pull_request.merged == true
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - run: |
+          git branch -a
+          git log --oneline -10
+
+      - name: Calculate semantic version
+        id: calculate_version
+        uses: paulhatch/semantic-version@v5.0.3
+        with:
+          tag_prefix: v
+      - run: |
+          echo ${VERSION} | jq
+        env:
+          VERSION: ${{ toJSON(steps.calculate_version.outputs) }}
+
+      - run: |
+          git tag ${VERSION_TAG}
+          git push origin ${VERSION_TAG}
           gh release create ${VERSION_TAG} --draft --title ${VERSION_TAG}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION_TAG: ${{ needs.build.outputs.VERSION_TAG }}
-
