@@ -62,7 +62,7 @@ jobs:
             --head ${HEAD_BRANCH} \
             --label ${LABEL} \
             --title 'Update submodule' \
-            --body <<EOS \
+            --body <<EOS
           Update submodule
           - target directory: ${{ inputs.submodule_dir }}
           EOS
