@@ -76,7 +76,7 @@ jobs:
           gh pr create \
             --head ${HEAD_BRANCH} \
             --title ${VERSION_TAG} \
-            --body << EOS \
+            --body <<EOS \
             Update submodule \
             - candidated version: ${VERSION_TAG} \
             EOS
