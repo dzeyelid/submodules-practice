@@ -50,34 +50,21 @@ jobs:
     permissions:
       contents: write
     steps:
-      - run: echo 'Todo'
       - uses: actions/checkout@v3
-#        with:
-#          fetch-depth: 0
-#      - name: Install GitVersion
-#        uses: gittools/actions/gitversion/setup@v0.9.7
-#        with:
-#          versionSpec: 5.x
-#      - name: Calculate semantic version
-#        id: gitversion
-#        uses: gittools/actions/gitversion/execute@v0.9.7
-#      - run: |
-#          echo ${GITVERSION} | jq
-#        env:
-#          GITVERSION: ${{ toJSON(steps.gitversion.outputs) }}
       - name: Calculate semantic version
-        id: version
+        id: calculate_version
         uses: paulhatch/semantic-version@v5.0.3
         with:
           tag_prefix: v
       - run: |
           echo ${VERSION} | jq
         env:
-          VERSION: ${{ toJSON(steps.version.outputs) }}
+          VERSION: ${{ toJSON(steps.calculate_version.outputs) }}
       - run: |
-          gh release create v0.0.1 --draft --title v0.0.1
+          gh release create ${VERSION_TAG} --draft --title ${VERSION_TAG}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
 
   create_pull_request:
     name: Create pull request
