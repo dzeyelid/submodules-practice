@@ -58,14 +58,16 @@ jobs:
       - run: echo 'Todo'
       - uses: actions/checkout@v3
       - run: |
+          BODY=$(cat <<EOS
+          Update submodule
+          - target directory: ${{ inputs.submodule_dir }}
+          EOS
+          )
           gh pr create \
             --head ${HEAD_BRANCH} \
             --label ${LABEL} \
             --title 'Update submodule' \
-            --body <<EOS
-          Update submodule
-          - target directory: ${{ inputs.submodule_dir }}
-          EOS
+            --body "${BODY}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HEAD_BRANCH: ${{ needs.build.outputs.HEAD_BRANCH }}
