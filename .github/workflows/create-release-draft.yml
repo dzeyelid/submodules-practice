@@ -7,7 +7,6 @@ on:
 
 env:
   BASE_BRANCH: main
-  TARGET_LABEL: update-submodule
 
 jobs:
   debug:
@@ -22,7 +21,7 @@ jobs:
     name: Create release draft
     runs-on: ubuntu-latest
 #    if: github.event.pull_request.merged == true
-    if: contains(github.event.pull_request.labels.*.name, env.TARGET_LABEL)
+    if: contains(github.event.pull_request.labels.*.name, 'update-submodule')
     permissions:
       contents: write
     steps:
