@@ -60,6 +60,7 @@ jobs:
       - run: |
           gh pr create \
             --head ${HEAD_BRANCH} \
+            --label ${LABEL} \
             --title 'Update submodule' \
             --body <<EOS \
           Update submodule\
@@ -68,3 +69,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HEAD_BRANCH: ${{ needs.build.outputs.HEAD_BRANCH }}
+          LABEL: update-submodule
