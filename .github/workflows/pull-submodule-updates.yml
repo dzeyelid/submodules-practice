@@ -15,14 +15,12 @@ jobs:
     permissions:
       contents: write
     outputs:
-      VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
       HEAD_BRANCH: ${{ steps.push.outputs.HEAD_BRANCH }}
     steps:
       - name: Checkout base repository
         uses: actions/checkout@v3
         with:
           submodules: true
-          fetch-depth: 0
 
       - name: Checkout submodule repository
         run: |
@@ -36,16 +34,6 @@ jobs:
         run: |
           echo 'Build'
 
-      - name: Calculate semantic version
-        id: calculate_version
-        uses: paulhatch/semantic-version@v5.0.3
-        with:
-          tag_prefix: v
-      - run: |
-          echo ${VERSION} | jq
-        env:
-          VERSION: ${{ toJSON(steps.calculate_version.outputs) }}
-
       - name: Push updates
         id: push
         run: |
@@ -57,8 +45,7 @@ jobs:
           git push -u origin ${HEAD_BRANCH}
           echo "HEAD_BRANCH=${HEAD_BRANCH}" > ${GITHUB_OUTPUT}
         env:
-          VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
-          HEAD_BRANCH: update-submodule-${{ steps.calculate_version.outputs.version_tag }}
+          HEAD_BRANCH: update-submodule
 
   create_pull_request:
     name: Create pull request
@@ -73,12 +60,11 @@ jobs:
       - run: |
           gh pr create \
             --head ${HEAD_BRANCH} \
-            --title ${VERSION_TAG} \
+            --title 'Update submodule' \
             --body <<EOS \
-            Update submodule \
-            - candidated version: ${VERSION_TAG} \
-            EOS
+          Update submodule\
+          - target directory: ${{ inputs.submodule_dir }}\
+          EOS
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION_TAG: ${{ needs.build.outputs.VERSION_TAG }}
           HEAD_BRANCH: ${{ needs.build.outputs.HEAD_BRANCH }}
