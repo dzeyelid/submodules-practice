@@ -63,8 +63,8 @@ jobs:
             --label ${LABEL} \
             --title 'Update submodule' \
             --body <<EOS \
-          Update submodule\
-          - target directory: ${{ inputs.submodule_dir }}\
+          Update submodule
+          - target directory: ${{ inputs.submodule_dir }}
           EOS
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
