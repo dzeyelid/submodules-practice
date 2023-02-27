@@ -89,7 +89,7 @@ jobs:
       - run: echo 'Todo'
       - uses: actions/checkout@v3
       - run: |
-          gh pr create --base ${HEAD_BRANCH} --title ${VERSION_TAG} --body "Update submodule\n- candidated version: ${VERSION_TAG}"
+          gh pr create --head ${HEAD_BRANCH} --title ${VERSION_TAG} --body "Update submodule\n- candidated version: ${VERSION_TAG}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION_TAG: ${{ needs.build.outputs.VERSION_TAG }}
