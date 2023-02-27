@@ -1,4 +1,4 @@
-name: 'Pull submodule''s update'
+name: 'Pull submodule''s updates'
 
 on:
   workflow_dispatch:
@@ -49,6 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo 'Todo'
+      - uses: actions/checkout@v3
       - run: |
           gh auth status
           gh release list
