@@ -40,6 +40,7 @@ jobs:
           git add ${{ inputs.submodule_dir }}
           git commit -m "Update submodule: ${{ inputs.submodule_dir }}"
           git push
+        continue-on-error: true # for debug
 
   create_release_draft:
     name: Create release draft
@@ -48,6 +49,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo 'Todo'
+      - run: |
+          gh auth status
+          gh release list
+          gh release create v0.0.1 --draft --title v0.0.1
 
   create_pull_request:
     name: Create pull request
