@@ -1,0 +1,30 @@
+name: Create release draft
+
+on:
+  pull_request:
+    branches: main
+    types: closed
+  
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo ${GITHUB_CONTEXT} | jq
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+
+  create_release_draft:
+    name: Create release draft
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          gh release create ${VERSION_TAG} --draft --title ${VERSION_TAG}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION_TAG: ${{ needs.build.outputs.VERSION_TAG }}
+
