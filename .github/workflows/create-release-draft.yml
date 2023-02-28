@@ -44,9 +44,10 @@ jobs:
           VERSION: ${{ toJSON(steps.calculate_version.outputs) }}
 
       - run: |
-          git tag ${VERSION_TAG}
+          git tag ${VERSION_TAG} ${MERGED_SHA}
           git push origin ${VERSION_TAG}
           gh release create ${VERSION_TAG} --draft --title ${VERSION_TAG}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
+          MERGED_SHA: ${{ github.event.pull_request.merge_commit_sha }}
