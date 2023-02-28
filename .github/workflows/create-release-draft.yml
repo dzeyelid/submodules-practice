@@ -5,9 +5,6 @@ on:
     branches: main
     types: closed
 
-env:
-  BASE_BRANCH: main
-
 jobs:
   debug:
     runs-on: ubuntu-latest
@@ -26,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ env.BASE_BRANCH }}
+          ref: ${{ github.base_ref }}
           fetch-depth: 0
 
       - run: |
@@ -51,3 +48,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION_TAG: ${{ steps.calculate_version.outputs.version_tag }}
           MERGED_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+
+  delete-branch:
+    name: Delete the branch for update-submodule
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'update-submodule')
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Delete branch
+        run: |
+          git push origin --delete ${{ github.head_ref }}
