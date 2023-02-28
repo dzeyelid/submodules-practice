@@ -9,6 +9,14 @@ env:
   BASE_BRANCH: main
 
 jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo ${GITHUB_CONTEXT} | jq
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+
   create_release_draft:
     name: Create release draft
     runs-on: ubuntu-latest
